@@ -30,11 +30,11 @@ func TestRenderStruct(t *testing.T) {
 	r := NewJsonHandler(u)
 	resp := server_mock.NewHttpResponseWriterMock()
 	req, err := server_mock.NewHttpRequestMock("/")
-	if err = AssertThat(err, NilValue()); err != nil {
+	if err := AssertThat(err, NilValue()); err != nil {
 		t.Fatal()
 	}
 	r.ServeHTTP(resp, req)
-	if err = AssertThat(resp.String(), Is(`{"firstname":"Hello","lastname":"World"}`)); err != nil {
+	if err := AssertThat(resp.String(), Is(`{"firstname":"Hello","lastname":"World"}`)); err != nil {
 		t.Fatal(err)
 	}
 }
@@ -50,11 +50,11 @@ func TestRenderListOfStruct(t *testing.T) {
 	r := NewJsonHandler(list)
 	resp := server_mock.NewHttpResponseWriterMock()
 	req, err := server_mock.NewHttpRequestMock("/")
-	if err = AssertThat(err, NilValue()); err != nil {
+	if err := AssertThat(err, NilValue()); err != nil {
 		t.Fatal()
 	}
 	r.ServeHTTP(resp, req)
-	if err = AssertThat(resp.String(), Is(`[{"firstname":"Hello","lastname":"World"},{"firstname":"Hello","lastname":"World"}]`)); err != nil {
+	if err := AssertThat(resp.String(), Is(`[{"firstname":"Hello","lastname":"World"},{"firstname":"Hello","lastname":"World"}]`)); err != nil {
 		t.Fatal(err)
 	}
 }
@@ -64,11 +64,11 @@ func TestRenderEmptyList(t *testing.T) {
 	r := NewJsonHandler(list)
 	resp := server_mock.NewHttpResponseWriterMock()
 	req, err := server_mock.NewHttpRequestMock("/")
-	if err = AssertThat(err, NilValue()); err != nil {
+	if err := AssertThat(err, NilValue()); err != nil {
 		t.Fatal()
 	}
 	r.ServeHTTP(resp, req)
-	if err = AssertThat(resp.String(), Is(`[]`)); err != nil {
+	if err := AssertThat(resp.String(), Is(`[]`)); err != nil {
 		t.Fatal(err)
 	}
 }
@@ -77,11 +77,11 @@ func TestRenderNilList(t *testing.T) {
 	r := NewJsonHandler(list)
 	resp := server_mock.NewHttpResponseWriterMock()
 	req, err := server_mock.NewHttpRequestMock("/")
-	if err = AssertThat(err, NilValue()); err != nil {
+	if err := AssertThat(err, NilValue()); err != nil {
 		t.Fatal()
 	}
 	r.ServeHTTP(resp, req)
-	if err = AssertThat(resp.String(), Is(`[]`)); err != nil {
+	if err := AssertThat(resp.String(), Is(`[]`)); err != nil {
 		t.Fatal(err)
 	}
 }

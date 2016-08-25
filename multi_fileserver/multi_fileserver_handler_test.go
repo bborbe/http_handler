@@ -38,7 +38,7 @@ func TestServeHTTP404(t *testing.T) {
 		t.Fatal(err)
 	}
 	h.ServeHTTP(response, request)
-	if err = AssertThat(response.Status(), Is(404)); err != nil {
+	if err := AssertThat(response.Status(), Is(404)); err != nil {
 		t.Fatal(err)
 	}
 }
@@ -57,10 +57,10 @@ func TestServeHTTPDir1(t *testing.T) {
 		t.Fatal(err)
 	}
 	h.ServeHTTP(response, request)
-	if err = AssertThat(response.Status(), Is(200)); err != nil {
+	if err := AssertThat(response.Status(), Is(200)); err != nil {
 		t.Fatal(err)
 	}
-	if err = AssertThat(string(response.Bytes()), Is("a1")); err != nil {
+	if err := AssertThat(string(response.Bytes()), Is("a1")); err != nil {
 		t.Fatal(err)
 	}
 }
@@ -79,10 +79,10 @@ func TestServeHTTPDir2(t *testing.T) {
 		t.Fatal(err)
 	}
 	h.ServeHTTP(response, request)
-	if err = AssertThat(response.Status(), Is(200)); err != nil {
+	if err := AssertThat(response.Status(), Is(200)); err != nil {
 		t.Fatal(err)
 	}
-	if err = AssertThat(string(response.Bytes()), Is("b2")); err != nil {
+	if err := AssertThat(string(response.Bytes()), Is("b2")); err != nil {
 		t.Fatal(err)
 	}
 }
@@ -101,10 +101,10 @@ func TestServeHTTPLastWins(t *testing.T) {
 		t.Fatal(err)
 	}
 	h.ServeHTTP(response, request)
-	if err = AssertThat(response.Status(), Is(200)); err != nil {
+	if err := AssertThat(response.Status(), Is(200)); err != nil {
 		t.Fatal(err)
 	}
-	if err = AssertThat(string(response.Bytes()), Is("a2")); err != nil {
+	if err := AssertThat(string(response.Bytes()), Is("a2")); err != nil {
 		t.Fatal(err)
 	}
 }
@@ -122,10 +122,10 @@ func TestServeHTTPIndexHtml(t *testing.T) {
 		t.Fatal(err)
 	}
 	h.ServeHTTP(response, request)
-	if err = AssertThat(response.Status(), Is(200)); err != nil {
+	if err := AssertThat(response.Status(), Is(200)); err != nil {
 		t.Fatal(err)
 	}
-	if err = AssertThat(string(response.Bytes()), Is("MyIndex")); err != nil {
+	if err := AssertThat(string(response.Bytes()), Is("MyIndex")); err != nil {
 		t.Fatal(err)
 	}
 }
@@ -143,10 +143,10 @@ func TestServeHTTPRoot(t *testing.T) {
 		t.Fatal(err)
 	}
 	h.ServeHTTP(response, request)
-	if err = AssertThat(response.Status(), Is(200)); err != nil {
+	if err := AssertThat(response.Status(), Is(200)); err != nil {
 		t.Fatal(err)
 	}
-	if err = AssertThat(string(response.Bytes()), Is("MyIndex")); err != nil {
+	if err := AssertThat(string(response.Bytes()), Is("MyIndex")); err != nil {
 		t.Fatal(err)
 	}
 }
@@ -164,10 +164,10 @@ func TestServeHTTPSlash(t *testing.T) {
 		t.Fatal(err)
 	}
 	h.ServeHTTP(response, request)
-	if err = AssertThat(response.Status(), Is(200)); err != nil {
+	if err := AssertThat(response.Status(), Is(200)); err != nil {
 		t.Fatal(err)
 	}
-	if err = AssertThat(string(response.Bytes()), Is("MyIndex")); err != nil {
+	if err := AssertThat(string(response.Bytes()), Is("MyIndex")); err != nil {
 		t.Fatal(err)
 	}
 }

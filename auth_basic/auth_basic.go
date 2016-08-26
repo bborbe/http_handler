@@ -38,17 +38,17 @@ func (h *handler) serveHTTP(responseWriter http.ResponseWriter, request *http.Re
 	logger.Debugf("check basic auth")
 	user, pass, err := header.ParseAuthorizationBasisHttpRequest(request)
 	if err != nil {
-		logger.Debugf("parse header failed: %v", err)
+		logger.Warnf("parse header failed: %v", err)
 		return err
 	}
 	result, err := h.check(user, pass)
 	if err != nil {
-		logger.Debugf("check auth failed: %v", err)
+		logger.Warnf("check auth for user %v failed: %v", user, err)
 		return err
 	}
 	if !result {
-		logger.Debugf("auth failed")
-		return fmt.Errorf("auth failed")
+		logger.Infof("auth invalid for user %v", user)
+		return fmt.Errorf("auth invalid for user %v", user)
 	}
 	h.handler(responseWriter, request)
 	return nil

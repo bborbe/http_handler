@@ -4,10 +4,8 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/bborbe/log"
+	"github.com/golang/glog"
 )
-
-var logger = log.DefaultLogger
 
 const DIRECTORY_INDEX = "index.html"
 
@@ -25,9 +23,9 @@ func reverse(dirs []string) []string {
 	result := make([]string, len(dirs))
 	for i, dir := range dirs {
 		if _, err := os.Stat(dir); os.IsNotExist(err) {
-			logger.Warnf("dir %s not found", dir)
+			glog.Warningf("dir %s not found", dir)
 		}
-		logger.Debugf("setup dir %s", dir)
+		glog.V(2).Infof("setup dir %s", dir)
 		result[len(result)-i-1] = dir
 	}
 	return result
@@ -39,22 +37,22 @@ func (h *multiFileserverHandler) ServeHTTP(responseWriter http.ResponseWriter, r
 		name = DIRECTORY_INDEX
 	}
 	for _, root := range h.dirs {
-		logger.Debugf("search file %s in directory %s", name, root)
+		glog.V(2).Infof("search file %s in directory %s", name, root)
 		f, err := http.Dir(root).Open(name)
 		if err != nil {
-			logger.Debugf("file %s not found in directory %s", name, root)
+			glog.V(2).Infof("file %s not found in directory %s", name, root)
 			continue
 		}
 		defer f.Close()
 		d, err := f.Stat()
 		if err != nil {
-			logger.Debugf("stat file %s failed: %v", err)
+			glog.V(2).Infof("stat file %s failed: %v", err)
 			return
 		}
-		logger.Debugf("found file %s in directory %s", name, root)
+		glog.V(2).Infof("found file %s in directory %s", name, root)
 		http.ServeContent(responseWriter, request, d.Name(), d.ModTime(), f)
 		return
 	}
-	logger.Infof("file not found %s", name)
+	glog.Infof("file not found %s", name)
 	http.NotFound(responseWriter, request)
 }

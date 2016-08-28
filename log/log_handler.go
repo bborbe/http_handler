@@ -4,10 +4,8 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/bborbe/log"
+	"github.com/golang/glog"
 )
-
-var logger = log.DefaultLogger
 
 type logHandler struct {
 	handler http.Handler
@@ -21,8 +19,8 @@ func NewLogHandler(handler http.Handler) *logHandler {
 
 func (m *logHandler) ServeHTTP(responseWriter http.ResponseWriter, request *http.Request) {
 	start := time.Now()
-	logger.Debugf("%s %s", request.Method, request.RequestURI)
+	glog.V(2).Infof("%s %s", request.Method, request.RequestURI)
 	m.handler.ServeHTTP(responseWriter, request)
 	end := time.Now()
-	logger.Debugf("%s %s takes %dms", request.Method, request.RequestURI, end.Sub(start)/time.Millisecond)
+	glog.V(2).Infof("%s %s takes %dms", request.Method, request.RequestURI, end.Sub(start)/time.Millisecond)
 }

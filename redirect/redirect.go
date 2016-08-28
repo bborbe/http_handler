@@ -3,10 +3,8 @@ package redirect
 import (
 	"net/http"
 
-	"github.com/bborbe/log"
+	"github.com/golang/glog"
 )
-
-var logger = log.DefaultLogger
 
 type handler struct {
 	target string
@@ -21,6 +19,6 @@ func New(target string) *handler {
 }
 
 func (h *handler) ServeHTTP(resp http.ResponseWriter, req *http.Request) {
-	logger.Debugf("redirect to %s %d", h.target, h.status)
+	glog.V(2).Infof("redirect to %s %d", h.target, h.status)
 	http.Redirect(resp, req, h.target, h.status)
 }

@@ -3,10 +3,8 @@ package filter
 import (
 	"net/http"
 
-	"github.com/bborbe/log"
+	"github.com/golang/glog"
 )
-
-var logger = log.DefaultLogger
 
 type handler struct {
 	check   Check
@@ -32,7 +30,7 @@ func (h *handler) ServeHTTP(resp http.ResponseWriter, req *http.Request) {
 func (h *handler) handlerFunc(req *http.Request) http.HandlerFunc {
 	result, err := h.check(req)
 	if err != nil {
-		logger.Debugf("check failed: %v", err)
+		glog.V(2).Infof("check failed: %v", err)
 		return h.failure
 	}
 	if !result {

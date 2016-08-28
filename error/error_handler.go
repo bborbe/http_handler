@@ -5,10 +5,8 @@ import (
 
 	"encoding/json"
 
-	"github.com/bborbe/log"
+	"github.com/golang/glog"
 )
-
-var logger = log.DefaultLogger
 
 type object struct {
 	status  int
@@ -27,7 +25,7 @@ func NewErrorMessage(status int, message string) *object {
 }
 
 func (o *object) ServeHTTP(responseWriter http.ResponseWriter, request *http.Request) {
-	logger.Debug("handle error")
+	glog.V(2).Info("handle error")
 
 	var data struct {
 		Status  int    `json:"status"`
@@ -35,10 +33,10 @@ func (o *object) ServeHTTP(responseWriter http.ResponseWriter, request *http.Req
 	}
 	data.Message = o.message
 	data.Status = o.status
-	logger.Debugf("set status: %d", o.status)
+	glog.V(2).Infof("set status: %d", o.status)
 	responseWriter.WriteHeader(o.status)
 	responseWriter.Header().Set("Content-Type", "application/json")
 	if err := json.NewEncoder(responseWriter).Encode(&data); err != nil {
-		logger.Warnf("render failureRenderer failed! %v", err)
+		glog.Warningf("render failureRenderer failed! %v", err)
 	}
 }

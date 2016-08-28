@@ -5,10 +5,8 @@ import (
 
 	"fmt"
 
-	"github.com/bborbe/log"
+	"github.com/golang/glog"
 )
-
-var logger = log.DefaultLogger
 
 type handler struct {
 }
@@ -19,7 +17,7 @@ func New() *handler {
 }
 
 func (h *handler) ServeHTTP(resp http.ResponseWriter, req *http.Request) {
-	logger.Debugf("not found %s %s", req.Method, req.URL.Path)
+	glog.V(2).Infof("not found %s %s", req.Method, req.URL.Path)
 	resp.WriteHeader(http.StatusNotFound)
 	fmt.Fprintf(resp, "not found %s %s\n", req.Method, req.URL.Path)
 }

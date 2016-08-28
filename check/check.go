@@ -5,10 +5,8 @@ import (
 
 	"fmt"
 
-	"github.com/bborbe/log"
+	"github.com/golang/glog"
 )
-
-var logger = log.DefaultLogger
 
 type Check func() error
 
@@ -24,10 +22,10 @@ func New(c Check) *handler {
 
 func (h *handler) ServeHTTP(resp http.ResponseWriter, req *http.Request) {
 	if err := h.check(); err != nil {
-		logger.Debugf("check => failed: %v", err)
+		glog.V(2).Infof("check => failed: %v", err)
 		http.Error(resp, fmt.Sprintf("check failed"), http.StatusInternalServerError)
 	} else {
-		logger.Debugf("check => ok")
+		glog.V(2).Infof("check => ok")
 		resp.WriteHeader(http.StatusOK)
 		fmt.Fprintf(resp, "ok")
 	}

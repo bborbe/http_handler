@@ -5,10 +5,8 @@ import (
 	"net/http"
 
 	"github.com/bborbe/http/header"
-	"github.com/bborbe/log"
+	"github.com/golang/glog"
 )
-
-var logger = log.DefaultLogger
 
 type Check func(username string, password string) (bool, error)
 
@@ -27,7 +25,7 @@ func New(subhandler http.HandlerFunc, check Check, realm string) *handler {
 }
 
 func (h *handler) ServeHTTP(responseWriter http.ResponseWriter, request *http.Request) {
-	logger.Debugf("check basic auth")
+	glog.V(2).Infof("check basic auth")
 	if err := h.serveHTTP(responseWriter, request); err != nil {
 		responseWriter.Header().Add("WWW-Authenticate", fmt.Sprintf("Basic realm=\"%s\"", h.realm))
 		responseWriter.WriteHeader(http.StatusUnauthorized)
@@ -35,19 +33,19 @@ func (h *handler) ServeHTTP(responseWriter http.ResponseWriter, request *http.Re
 }
 
 func (h *handler) serveHTTP(responseWriter http.ResponseWriter, request *http.Request) error {
-	logger.Debugf("check basic auth")
+	glog.V(2).Infof("check basic auth")
 	user, pass, err := header.ParseAuthorizationBasisHttpRequest(request)
 	if err != nil {
-		logger.Warnf("parse header failed: %v", err)
+		glog.Warningf("parse header failed: %v", err)
 		return err
 	}
 	result, err := h.check(user, pass)
 	if err != nil {
-		logger.Warnf("check auth for user %v failed: %v", user, err)
+		glog.Warningf("check auth for user %v failed: %v", user, err)
 		return err
 	}
 	if !result {
-		logger.Infof("auth invalid for user %v", user)
+		glog.Infof("auth invalid for user %v", user)
 		return fmt.Errorf("auth invalid for user %v", user)
 	}
 	h.handler(responseWriter, request)

@@ -1,5 +1,5 @@
 hash: 5e13510bcc28e8a78d39f67b8f26ffb55fcdc980143b2f9d13d3e956b80839d2
-updated: 2016-08-30T09:53:28.915735322+02:00
+updated: 2016-08-30T10:08:26.29403935+02:00
 imports:
 - name: github.com/bborbe/http
   version: addca5fc2e2de1bef39a64990873806e7fc9c0a9
@@ -8,6 +8,10 @@ imports:
   - mock
 - name: github.com/golang/glog
   version: 23def4e6c14b4da8ac2ed8007337bc5eb5007998
+- name: github.com/mesos/mesos-go
+  version: 2b28dad0aa75289407717b98d82c7871543bb4db
+  subpackages:
+  - examples/Godeps/_workspace/src/github.com/golang/glog
 testImports:
 - name: github.com/bborbe/assert
   version: 2db035a4c0870f6f48d1955f7b9542f9dbd4fb64

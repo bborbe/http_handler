@@ -3,7 +3,7 @@ package remove_prefix
 import (
 	"net/http"
 	"strings"
-	"github.com/mesos/mesos-go/examples/Godeps/_workspace/src/github.com/golang/glog"
+	"github.com/golang/glog"
 )
 
 type handler struct {

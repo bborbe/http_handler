@@ -1,4 +1,4 @@
-package nocache
+package nocacheheader
 
 import (
 	"net/http"

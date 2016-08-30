@@ -1,4 +1,4 @@
-package cachingheader
+package cacheheader
 
 import (
 	"net/http"

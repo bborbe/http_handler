@@ -8,7 +8,7 @@ import (
 )
 
 func TestImplementsHandler(t *testing.T) {
-	r := NewHandlerStaticContent("hello")
+	r := New("hello")
 	var i *http.Handler
 	err := AssertThat(r, Implements(i))
 	if err != nil {

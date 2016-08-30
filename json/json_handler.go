@@ -10,23 +10,23 @@ import (
 	"github.com/golang/glog"
 )
 
-type jsonHandler struct {
+type handler struct {
 	m interface{}
 }
 
-func NewJsonHandler(m interface{}) *jsonHandler {
-	h := new(jsonHandler)
+func New(m interface{}) *handler {
+	h := new(handler)
 	h.m = m
 	return h
 }
 
-func (m *jsonHandler) ServeHTTP(responseWriter http.ResponseWriter, request *http.Request) {
+func (h *handler) ServeHTTP(responseWriter http.ResponseWriter, request *http.Request) {
 	glog.V(2).Info("write json")
-	glog.V(2).Infof("object to convert %v", m.m)
-	b, err := json.Marshal(m.m)
+	glog.V(2).Infof("object to convert %v", h.m)
+	b, err := json.Marshal(h.m)
 	if err != nil {
 		glog.V(2).Infof("Marshal json failed: %v", err)
-		e := error_handler.NewErrorMessage(http.StatusInternalServerError, err.Error())
+		e := error_handler.NewMessage(http.StatusInternalServerError, err.Error())
 		e.ServeHTTP(responseWriter, request)
 		return
 	}
@@ -34,8 +34,8 @@ func (m *jsonHandler) ServeHTTP(responseWriter http.ResponseWriter, request *htt
 	responseWriter.Header().Set("Content-Type", "application/json")
 	responseWriter.WriteHeader(http.StatusOK)
 
-	glog.V(2).Infof("object type %v", reflect.TypeOf(m.m).Kind())
-	if reflect.TypeOf(m.m).Kind() == reflect.Slice && string(b) == "null" {
+	glog.V(2).Infof("object type %v", reflect.TypeOf(h.m).Kind())
+	if reflect.TypeOf(h.m).Kind() == reflect.Slice && string(b) == "null" {
 		responseWriter.Write([]byte("[]"))
 	} else {
 		responseWriter.Write(b)

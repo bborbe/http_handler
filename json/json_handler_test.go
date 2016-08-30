@@ -9,7 +9,7 @@ import (
 )
 
 func TestImplementsHandler(t *testing.T) {
-	r := NewJsonHandler(nil)
+	r := New(nil)
 	var i *http.Handler
 	err := AssertThat(r, Implements(i))
 	if err != nil {
@@ -27,10 +27,10 @@ func TestRenderStruct(t *testing.T) {
 		FirstName: "Hello",
 		LastName:  "World",
 	}
-	r := NewJsonHandler(u)
+	r := New(u)
 	resp := server_mock.NewHttpResponseWriterMock()
 	req, err := server_mock.NewHttpRequestMock("/")
-	if err := AssertThat(err, NilValue()); err != nil {
+	if err = AssertThat(err, NilValue()); err != nil {
 		t.Fatal()
 	}
 	r.ServeHTTP(resp, req)
@@ -47,10 +47,10 @@ func TestRenderListOfStruct(t *testing.T) {
 		FirstName: "Hello",
 		LastName:  "World",
 	}}
-	r := NewJsonHandler(list)
+	r := New(list)
 	resp := server_mock.NewHttpResponseWriterMock()
 	req, err := server_mock.NewHttpRequestMock("/")
-	if err := AssertThat(err, NilValue()); err != nil {
+	if err = AssertThat(err, NilValue()); err != nil {
 		t.Fatal()
 	}
 	r.ServeHTTP(resp, req)
@@ -61,10 +61,10 @@ func TestRenderListOfStruct(t *testing.T) {
 
 func TestRenderEmptyList(t *testing.T) {
 	list := make([]user, 0)
-	r := NewJsonHandler(list)
+	r := New(list)
 	resp := server_mock.NewHttpResponseWriterMock()
 	req, err := server_mock.NewHttpRequestMock("/")
-	if err := AssertThat(err, NilValue()); err != nil {
+	if err = AssertThat(err, NilValue()); err != nil {
 		t.Fatal()
 	}
 	r.ServeHTTP(resp, req)
@@ -74,10 +74,10 @@ func TestRenderEmptyList(t *testing.T) {
 }
 func TestRenderNilList(t *testing.T) {
 	var list []user
-	r := NewJsonHandler(list)
+	r := New(list)
 	resp := server_mock.NewHttpResponseWriterMock()
 	req, err := server_mock.NewHttpRequestMock("/")
-	if err := AssertThat(err, NilValue()); err != nil {
+	if err = AssertThat(err, NilValue()); err != nil {
 		t.Fatal()
 	}
 	r.ServeHTTP(resp, req)

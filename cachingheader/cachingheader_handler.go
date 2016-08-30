@@ -7,7 +7,7 @@ import (
 )
 
 var modtime = time.Now()
-var ExtensionToCachingHeader = map[string]bool{
+var extensionToCachingHeader = map[string]bool{
 	"json": true,
 	"gif":  true,
 	"jpg":  true,
@@ -20,16 +20,16 @@ type cachingHeaderHandler struct {
 	handler http.Handler
 }
 
-func NewCachingHeaderHandler(handler http.Handler) *cachingHeaderHandler {
+func New(handler http.Handler) *cachingHeaderHandler {
 	h := new(cachingHeaderHandler)
 	h.handler = handler
 	return h
 }
 
 func (h *cachingHeaderHandler) ServeHTTP(responseWriter http.ResponseWriter, request *http.Request) {
-	_, found := ExtensionToCachingHeader[getExtension(request.RequestURI)]
+	_, found := extensionToCachingHeader[getExtension(request.RequestURI)]
 	if found {
-		SetCachingHeaderToResponseWriter(responseWriter)
+		SetHeaderToResponse(responseWriter)
 	}
 	h.handler.ServeHTTP(responseWriter, request)
 }
@@ -39,10 +39,11 @@ func getExtension(uri string) string {
 	if pos == -1 {
 		return ""
 	}
-	return uri[pos+1:]
+	return uri[pos + 1:]
 }
 
-func SetCachingHeaderToResponseWriter(responseWriter http.ResponseWriter) {
+// SetHeaderToResponse for cache
+func SetHeaderToResponse(responseWriter http.ResponseWriter) {
 	responseWriter.Header().Set("Cache-Control", "max-age=864000")
 	responseWriter.Header().Set("Vary", "Accept-Encoding")
 	responseWriter.Header().Set("Last-Modified", modtime.UTC().Format(http.TimeFormat))

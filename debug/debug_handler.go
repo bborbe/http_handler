@@ -12,16 +12,16 @@ type handler struct {
 }
 
 func New(subhandler http.Handler) *handler {
-	m := new(handler)
-	m.subhandler = subhandler
-	return m
+	h := new(handler)
+	h.subhandler = subhandler
+	return h
 }
 
-func (m *handler) ServeHTTP(responseWriter http.ResponseWriter, request *http.Request) {
+func (h *handler) ServeHTTP(responseWriter http.ResponseWriter, request *http.Request) {
 	start := time.Now()
 	defer glog.V(2).Infof("%s %s takes %dms", request.Method, request.RequestURI, time.Now().Sub(start)/time.Millisecond)
 
 	glog.V(2).Infof("request %v: ", request)
-	m.subhandler.ServeHTTP(responseWriter, request)
+	h.subhandler.ServeHTTP(responseWriter, request)
 	glog.V(2).Infof("response %v: ", responseWriter)
 }

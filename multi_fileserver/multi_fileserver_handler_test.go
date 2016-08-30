@@ -16,7 +16,7 @@ import (
 )
 
 func TestImplementsHandler(t *testing.T) {
-	r := NewMultiFileserverHandler("/tmp")
+	r := New("/tmp")
 	var i *http.Handler
 	err := AssertThat(r, Implements(i))
 	if err != nil {
@@ -31,7 +31,7 @@ func TestServeHTTP404(t *testing.T) {
 	defer os.RemoveAll(dir2)
 	writeFile(dir1, "a.txt", "a1")
 	writeFile(dir2, "b.txt", "b2")
-	h := NewMultiFileserverHandler(dir1, dir2)
+	h := New(dir1, dir2)
 	response := server_mock.NewHttpResponseWriterMock()
 	request, err := server_mock.NewHttpRequestMock("http://www.example.com/foo.txt")
 	if err != nil {
@@ -50,7 +50,7 @@ func TestServeHTTPDir1(t *testing.T) {
 	defer os.RemoveAll(dir2)
 	writeFile(dir1, "a.txt", "a1")
 	writeFile(dir2, "b.txt", "b2")
-	h := NewMultiFileserverHandler(dir1, dir2)
+	h := New(dir1, dir2)
 	response := server_mock.NewHttpResponseWriterMock()
 	request, err := server_mock.NewHttpRequestMock("http://www.example.com/a.txt")
 	if err != nil {
@@ -72,7 +72,7 @@ func TestServeHTTPDir2(t *testing.T) {
 	defer os.RemoveAll(dir2)
 	writeFile(dir1, "a.txt", "a1")
 	writeFile(dir2, "b.txt", "b2")
-	h := NewMultiFileserverHandler(dir1, dir2)
+	h := New(dir1, dir2)
 	response := server_mock.NewHttpResponseWriterMock()
 	request, err := server_mock.NewHttpRequestMock("http://www.example.com/b.txt")
 	if err != nil {
@@ -94,7 +94,7 @@ func TestServeHTTPLastWins(t *testing.T) {
 	defer os.RemoveAll(dir2)
 	writeFile(dir1, "a.txt", "a1")
 	writeFile(dir2, "a.txt", "a2")
-	h := NewMultiFileserverHandler(dir1, dir2)
+	h := New(dir1, dir2)
 	response := server_mock.NewHttpResponseWriterMock()
 	request, err := server_mock.NewHttpRequestMock("http://www.example.com/a.txt")
 	if err != nil {
@@ -114,8 +114,8 @@ func TestServeHTTPIndexHtml(t *testing.T) {
 	defer os.RemoveAll(dir1)
 	dir2, _ := ioutil.TempDir("", "dir2")
 	defer os.RemoveAll(dir2)
-	writeFile(dir1, DIRECTORY_INDEX, "MyIndex")
-	h := NewMultiFileserverHandler(dir1, dir2)
+	writeFile(dir1, directoryIndex, "MyIndex")
+	h := New(dir1, dir2)
 	response := server_mock.NewHttpResponseWriterMock()
 	request, err := server_mock.NewHttpRequestMock("http://www.example.com/index.html")
 	if err != nil {
@@ -135,8 +135,8 @@ func TestServeHTTPRoot(t *testing.T) {
 	defer os.RemoveAll(dir1)
 	dir2, _ := ioutil.TempDir("", "dir2")
 	defer os.RemoveAll(dir2)
-	writeFile(dir1, DIRECTORY_INDEX, "MyIndex")
-	h := NewMultiFileserverHandler(dir1, dir2)
+	writeFile(dir1, directoryIndex, "MyIndex")
+	h := New(dir1, dir2)
 	response := server_mock.NewHttpResponseWriterMock()
 	request, err := server_mock.NewHttpRequestMock("http://www.example.com")
 	if err != nil {
@@ -156,8 +156,8 @@ func TestServeHTTPSlash(t *testing.T) {
 	defer os.RemoveAll(dir1)
 	dir2, _ := ioutil.TempDir("", "dir2")
 	defer os.RemoveAll(dir2)
-	writeFile(dir1, DIRECTORY_INDEX, "MyIndex")
-	h := NewMultiFileserverHandler(dir1, dir2)
+	writeFile(dir1, directoryIndex, "MyIndex")
+	h := New(dir1, dir2)
 	response := server_mock.NewHttpResponseWriterMock()
 	request, err := server_mock.NewHttpRequestMock("http://www.example.com/")
 	if err != nil {

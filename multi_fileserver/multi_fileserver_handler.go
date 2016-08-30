@@ -7,14 +7,14 @@ import (
 	"github.com/golang/glog"
 )
 
-const DIRECTORY_INDEX = "index.html"
+const directoryIndex = "index.html"
 
-type multiFileserverHandler struct {
+type handler struct {
 	dirs []string
 }
 
-func NewMultiFileserverHandler(dirs ...string) *multiFileserverHandler {
-	h := new(multiFileserverHandler)
+func New(dirs ...string) *handler {
+	h := new(handler)
 	h.dirs = reverse(dirs)
 	return h
 }
@@ -31,10 +31,10 @@ func reverse(dirs []string) []string {
 	return result
 }
 
-func (h *multiFileserverHandler) ServeHTTP(responseWriter http.ResponseWriter, request *http.Request) {
+func (h *handler) ServeHTTP(responseWriter http.ResponseWriter, request *http.Request) {
 	name := request.URL.Path
 	if name == "" || name == "/" {
-		name = DIRECTORY_INDEX
+		name = directoryIndex
 	}
 	for _, root := range h.dirs {
 		glog.V(2).Infof("search file %s in directory %s", name, root)

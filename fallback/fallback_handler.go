@@ -7,28 +7,28 @@ import (
 	"github.com/golang/glog"
 )
 
-type fallback struct {
+type handler struct {
 	handlerFinder handler_finder.HandlerFinder
 	fallback      http.Handler
 }
 
-func NewFallback(handlerFinder handler_finder.HandlerFinder, fallbackHandler http.Handler) *fallback {
-	m := new(fallback)
-	m.handlerFinder = handlerFinder
-	m.fallback = fallbackHandler
-	return m
+func New(handlerFinder handler_finder.HandlerFinder, fallbackHandler http.Handler) *handler {
+	h := new(handler)
+	h.handlerFinder = handlerFinder
+	h.fallback = fallbackHandler
+	return h
 }
 
-func (m *fallback) ServeHTTP(responseWriter http.ResponseWriter, request *http.Request) {
-	handler := m.handlerFinder.FindHandler(request)
+func (h *handler) ServeHTTP(responseWriter http.ResponseWriter, request *http.Request) {
+	handler := h.handlerFinder.FindHandler(request)
 	if handler != nil {
 		glog.V(2).Info("handler found, use handler")
 		handler.ServeHTTP(responseWriter, request)
 		return
 	}
-	if m.fallback != nil {
+	if h.fallback != nil {
 		glog.V(2).Info("no handler found, use fallback")
-		m.fallback.ServeHTTP(responseWriter, request)
+		h.fallback.ServeHTTP(responseWriter, request)
 		return
 	}
 	glog.Info("no handler found and no fallback found")

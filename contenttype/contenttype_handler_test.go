@@ -10,7 +10,7 @@ import (
 )
 
 func TestImplementsHandler(t *testing.T) {
-	r := NewContentTypeHandler(nil)
+	r := New(nil)
 	var i *http.Handler
 	err := AssertThat(r, Implements(i))
 	if err != nil {
@@ -19,8 +19,8 @@ func TestImplementsHandler(t *testing.T) {
 }
 
 func TestIgnoreUnkownExtention(t *testing.T) {
-	subHandler := static.NewHandlerStaticContent("foo bar")
-	handler := NewContentTypeHandler(subHandler)
+	subHandler := static.New("foo bar")
+	handler := New(subHandler)
 	responseWriter := server_mock.NewHttpResponseWriterMock()
 	request, err := server_mock.NewHttpRequestMock("http://www.example.com/bla")
 	if err != nil {
@@ -34,8 +34,8 @@ func TestIgnoreUnkownExtention(t *testing.T) {
 }
 
 func TestKownExtention(t *testing.T) {
-	subHandler := static.NewHandlerStaticContent("foo bar")
-	handler := NewContentTypeHandler(subHandler)
+	subHandler := static.New("foo bar")
+	handler := New(subHandler)
 	responseWriter := server_mock.NewHttpResponseWriterMock()
 	request, err := server_mock.NewHttpRequestMock("http://www.example.com/bla.json")
 	if err != nil {

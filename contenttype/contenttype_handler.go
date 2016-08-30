@@ -5,7 +5,7 @@ import (
 	"strings"
 )
 
-var ExtensionToContentType = map[string]string{
+var extensionToContentType = map[string]string{
 	"json": "application/json",
 	"html": "text/html",
 	"gif":  "image/gif",
@@ -19,14 +19,14 @@ type contentTypeHandler struct {
 	handler http.Handler
 }
 
-func NewContentTypeHandler(handler http.Handler) *contentTypeHandler {
+func New(handler http.Handler) *contentTypeHandler {
 	h := new(contentTypeHandler)
 	h.handler = handler
 	return h
 }
 
 func (h *contentTypeHandler) ServeHTTP(responseWriter http.ResponseWriter, request *http.Request) {
-	contentType, found := ExtensionToContentType[getExtension(request.RequestURI)]
+	contentType, found := extensionToContentType[getExtension(request.RequestURI)]
 	if found {
 		responseWriter.Header().Set("Content-Type", contentType)
 	}

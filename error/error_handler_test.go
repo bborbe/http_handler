@@ -9,7 +9,7 @@ import (
 )
 
 func TestImplementsRequestHandler(t *testing.T) {
-	r := NewError(http.StatusNotFound)
+	r := New(http.StatusNotFound)
 	var i (*http.Handler) = nil
 	err := AssertThat(r, Implements(i).Message("check implements http.Handler"))
 	if err != nil {
@@ -18,7 +18,7 @@ func TestImplementsRequestHandler(t *testing.T) {
 }
 
 func TestContent(t *testing.T) {
-	handler := NewError(http.StatusNotFound)
+	handler := New(http.StatusNotFound)
 	responseWriter := server_mock.NewHttpResponseWriterMock()
 	request, err := server_mock.NewHttpRequestMock("http://www.example.com/foobar")
 	if err != nil {

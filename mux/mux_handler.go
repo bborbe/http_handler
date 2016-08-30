@@ -6,23 +6,23 @@ import (
 	"github.com/bborbe/http_handler_finder"
 )
 
-type muxHandler struct {
+type handler struct {
 	handlerFinder handler_finder.HandlerFinder
 	errorHandler  http.Handler
 }
 
-func NewMuxHandler(handlerFinder handler_finder.HandlerFinder, errorHandler http.Handler) *muxHandler {
-	m := new(muxHandler)
-	m.handlerFinder = handlerFinder
-	m.errorHandler = errorHandler
-	return m
+func New(handlerFinder handler_finder.HandlerFinder, errorHandler http.Handler) *handler {
+	h := new(handler)
+	h.handlerFinder = handlerFinder
+	h.errorHandler = errorHandler
+	return h
 }
 
-func (m *muxHandler) ServeHTTP(responseWriter http.ResponseWriter, request *http.Request) {
-	handler := m.handlerFinder.FindHandler(request)
+func (h *handler) ServeHTTP(responseWriter http.ResponseWriter, request *http.Request) {
+	handler := h.handlerFinder.FindHandler(request)
 	if handler != nil {
 		handler.ServeHTTP(responseWriter, request)
 	} else {
-		m.errorHandler.ServeHTTP(responseWriter, request)
+		h.errorHandler.ServeHTTP(responseWriter, request)
 	}
 }

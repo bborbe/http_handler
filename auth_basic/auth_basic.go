@@ -45,7 +45,7 @@ func (h *handler) serveHTTP(responseWriter http.ResponseWriter, request *http.Re
 		return err
 	}
 	if !result {
-		glog.Infof("auth invalid for user %v", user)
+		glog.V(1).Infof("auth invalid for user %v", user)
 		return fmt.Errorf("auth invalid for user %v", user)
 	}
 	h.handler(responseWriter, request)

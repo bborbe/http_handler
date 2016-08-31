@@ -53,6 +53,6 @@ func (h *handler) ServeHTTP(responseWriter http.ResponseWriter, request *http.Re
 		http.ServeContent(responseWriter, request, d.Name(), d.ModTime(), f)
 		return
 	}
-	glog.Infof("file not found %s", name)
+	glog.V(1).Infof("file not found %s", name)
 	http.NotFound(responseWriter, request)
 }

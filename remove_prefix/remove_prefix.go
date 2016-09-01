@@ -1,9 +1,10 @@
 package remove_prefix
 
 import (
-	"github.com/golang/glog"
 	"net/http"
 	"strings"
+
+	"github.com/golang/glog"
 )
 
 type handler struct {

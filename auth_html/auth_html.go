@@ -4,9 +4,10 @@ import (
 	"fmt"
 	"net/http"
 
+	"html/template"
+
 	"github.com/bborbe/http/header"
 	"github.com/golang/glog"
-	"html/template"
 )
 
 type Check func(username string, password string) (bool, error)

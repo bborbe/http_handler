@@ -3,8 +3,9 @@ package redirect_relative
 import (
 	"net/http"
 
-	"github.com/golang/glog"
 	"fmt"
+
+	"github.com/golang/glog"
 )
 
 type handler struct {
@@ -24,4 +25,3 @@ func (h *handler) ServeHTTP(resp http.ResponseWriter, req *http.Request) {
 	glog.V(2).Infof("redirect to %s %d", target, h.status)
 	http.Redirect(resp, req, target, h.status)
 }
-

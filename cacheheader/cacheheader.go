@@ -39,7 +39,7 @@ func getExtension(uri string) string {
 	if pos == -1 {
 		return ""
 	}
-	return uri[pos + 1:]
+	return uri[pos+1:]
 }
 
 // SetHeaderToResponse for cache

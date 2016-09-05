@@ -1,12 +1,10 @@
 package auth_html
 
 import (
-	"net/http"
-
-	"html/template"
-
 	"github.com/bborbe/http/header"
 	"github.com/golang/glog"
+	"html/template"
+	"net/http"
 	"time"
 )
 
@@ -53,7 +51,7 @@ func (h *handler) ServeHTTP(responseWriter http.ResponseWriter, request *http.Re
 
 func (h *handler) serveHTTP(responseWriter http.ResponseWriter, request *http.Request) error {
 	glog.V(2).Infof("check html auth")
-	valid, err := h.validateLoginCookie(request)
+	valid, err := h.validateLogin(request)
 	if err != nil {
 		glog.V(2).Infof("validate login failed: %v", err)
 		return err
@@ -64,6 +62,51 @@ func (h *handler) serveHTTP(responseWriter http.ResponseWriter, request *http.Re
 		return nil
 	}
 	return h.validateLoginParams(responseWriter, request)
+}
+
+func (h *handler) validateLogin(request *http.Request) (bool, error) {
+	if valid, _ := h.validateLoginBasic(request); valid {
+		return true, nil
+	}
+	valid, err := h.validateLoginCookie(request)
+	if err != nil {
+		return false, err
+	}
+	return valid, nil
+}
+
+func (h *handler) validateLoginBasic(request *http.Request) (bool, error) {
+	user, pass, err := header.ParseAuthorizationBasisHttpRequest(request)
+	if err != nil {
+		glog.Warningf("parse header failed: %v", err)
+		return false, err
+	}
+	valid, err := h.check(user, pass)
+	if err != nil {
+		glog.Warningf("check auth for user %v failed: %v", user, err)
+		return false, err
+	}
+	return valid, nil
+}
+
+func (h *handler) validateLoginCookie(request *http.Request) (bool, error) {
+	glog.V(2).Infof("validate login via cookie")
+	cookie, err := request.Cookie(cookieName)
+	if err != nil {
+		glog.V(2).Infof("get cookie %v failed: %v", cookieName, err)
+		return false, nil
+	}
+	data, err := h.crypter.Decrypt(cookie.Value)
+	if err != nil {
+		glog.V(1).Infof("decrypt failed: %v", err)
+		return false, nil
+	}
+	user, pass, err := header.ParseAuthorizationToken(data)
+	if err != nil {
+		glog.V(2).Infof("parse header failed: %v", err)
+		return false, nil
+	}
+	return h.check(user, pass)
 }
 
 func (h *handler) validateLoginParams(responseWriter http.ResponseWriter, request *http.Request) error {
@@ -99,26 +142,6 @@ func (h *handler) validateLoginParams(responseWriter http.ResponseWriter, reques
 	)
 	http.Redirect(responseWriter, request, "/", http.StatusTemporaryRedirect)
 	return nil
-}
-
-func (h *handler) validateLoginCookie(request *http.Request) (bool, error) {
-	glog.V(2).Infof("validate login via cookie")
-	cookie, err := request.Cookie(cookieName)
-	if err != nil {
-		glog.V(2).Infof("get cookie %v failed: %v", cookieName, err)
-		return false, nil
-	}
-	data, err := h.crypter.Decrypt(cookie.Value)
-	if err != nil {
-		glog.V(1).Infof("decrypt failed: %v", err)
-		return false, nil
-	}
-	user, pass, err := header.ParseAuthorizationToken(data)
-	if err != nil {
-		glog.V(2).Infof("parse header failed: %v", err)
-		return false, nil
-	}
-	return h.check(user, pass)
 }
 
 func (h *handler) loginForm(responseWriter http.ResponseWriter) error {
@@ -164,36 +187,27 @@ body {
 <div class="view-container">
 	<div class="container">
 		<div class="starter-template">
-
 			<form name="loginForm" class="form-horizontal" action="" method="post">
 				<fieldset>
-
 					<legend>Login required</legend>
-
 					<div class="form-group">
 						<label class="col-md-3 control-label" for="{{.FieldNameLogin}}">Login</label>
-
 						<div class="col-md-3">
 							<input type="text" id="{{.FieldNameLogin}}" name="{{.FieldNameLogin}}" min="1" max="255" required="" placeholder="login" class="form-control input-md">
 						</div>
 					</div>
-
 					<div class="form-group">
 						<label class="col-md-3 control-label" for="{{.FieldNamePassword}}">Password</label>
-
 						<div class="col-md-3">
 							<input type="password" id="{{.FieldNamePassword}}" name="{{.FieldNamePassword}}" min="1" max="255" required="" placeholder="password" class="form-control input-md">
 						</div>
 					</div>
-
 					<div class="form-group">
 						<label class="col-md-3 control-label" for="singlebutton"></label>
-
 						<div class="col-md-3">
 							<input type="submit" id="singlebutton" name="singlebutton" class="btn btn-primary" value="login">
 						</div>
 					</div>
-
 				</fieldset>
 			</form>
 		</div>

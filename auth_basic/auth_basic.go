@@ -39,12 +39,12 @@ func (h *handler) serveHTTP(responseWriter http.ResponseWriter, request *http.Re
 		glog.Warningf("parse header failed: %v", err)
 		return err
 	}
-	result, err := h.check(user, pass)
+	valid, err := h.check(user, pass)
 	if err != nil {
 		glog.Warningf("check auth for user %v failed: %v", user, err)
 		return err
 	}
-	if !result {
+	if !valid {
 		glog.V(1).Infof("auth invalid for user %v", user)
 		return fmt.Errorf("auth invalid for user %v", user)
 	}

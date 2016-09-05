@@ -41,8 +41,10 @@ func (h *handler) printForm(responseWriter http.ResponseWriter) error {
 	var t = template.Must(template.New("loginForm").Parse(HTML))
 	data := struct {
 		CookieName string
+		Title      string
 	}{
 		CookieName: h.cookieName,
+		Title:      "Login",
 	}
 	return t.Execute(responseWriter, data)
 }
@@ -74,11 +76,22 @@ func (h *handler) serveHTTP(responseWriter http.ResponseWriter, request *http.Re
 
 const HTML = `<!DOCTYPE html>
 <html>
-<head>
+<title>{{.Title}}</title>
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta http-equiv="Content-Language" content="en">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="author" content="Benjamin Borbe">
+<meta name="description" content="Booking App">
+<link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+<link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css">
 <style>
-label {
-	width: 100px;
-	display: inline-block;
+html {
+	position: relative;
+	min-height: 100%;
+}
+
+body {
+	margin-top: 60px;
 }
 </style>
 <script>
@@ -90,12 +103,43 @@ function login() {
 </script>
 </head>
 <body>
-<h1>Login required</h1>
-<form action="javascript:login()">
-<div><label for="login">Login:</label><input type="text" name="login" id="login"></div>
-<div><label for="password">Password:</label><input type="password" name="password" id="password"></div>
-<input type="submit" value="login">
-</form>
+<div class="view-container">
+	<div class="container">
+		<div class="starter-template">
+
+			<form name="loginForm" class="form-horizontal" action="javascript:login()">
+				<fieldset>
+
+					<legend>Login required</legend>
+
+					<div class="form-group">
+						<label class="col-md-3 control-label" for="login">Login</label>
+
+						<div class="col-md-3">
+							<input type="text" id="login" name="login" min="1" max="255" required="" placeholder="login" class="form-control input-md">
+						</div>
+					</div>
+
+					<div class="form-group">
+						<label class="col-md-3 control-label" for="password">Password</label>
+
+						<div class="col-md-3">
+							<input type="password" id="password" name="password" min="1" max="255" required="" placeholder="password" class="form-control input-md">
+						</div>
+					</div>
+
+					<div class="form-group">
+						<label class="col-md-3 control-label" for="singlebutton"></label>
+
+						<div class="col-md-3">
+							<input type="submit" id="singlebutton" name="singlebutton" class="btn btn-primary" value="login">
+						</div>
+					</div>
+
+				</fieldset>
+			</form>
+		</div>
+	</div>
+</div>
 </body>
-<html>
-`
+</html>`

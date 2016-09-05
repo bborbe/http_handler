@@ -61,6 +61,7 @@ func (h *handler) serveHTTP(responseWriter http.ResponseWriter, request *http.Re
 	if valid {
 		glog.V(2).Infof("login is valid, forward request")
 		h.handler(responseWriter, request)
+		return nil
 	}
 	return h.validateLoginParams(responseWriter, request)
 }
@@ -69,6 +70,10 @@ func (h *handler) validateLoginParams(responseWriter http.ResponseWriter, reques
 	glog.V(2).Infof("validate login via params")
 	login := request.FormValue(fieldNameLogin)
 	password := request.FormValue(fieldNamePassword)
+	if len(login) == 0 || len(password) == 0 {
+		glog.V(2).Infof("login or password empty => skip")
+		return h.loginForm(responseWriter)
+	}
 	valid, err := h.check(login, password)
 	if err != nil {
 		glog.V(2).Infof("check login failed: %v", err)
@@ -105,8 +110,8 @@ func (h *handler) validateLoginCookie(request *http.Request) (bool, error) {
 	}
 	data, err := h.crypter.Decrypt(cookie.Value)
 	if err != nil {
-		glog.V(2).Infof("decrypt failed: %v", err)
-		return false, err
+		glog.V(1).Infof("decrypt failed: %v", err)
+		return false, nil
 	}
 	user, pass, err := header.ParseAuthorizationToken(data)
 	if err != nil {
@@ -118,7 +123,6 @@ func (h *handler) validateLoginCookie(request *http.Request) (bool, error) {
 
 func (h *handler) loginForm(responseWriter http.ResponseWriter) error {
 	glog.V(2).Infof("login form")
-	responseWriter.WriteHeader(http.StatusUnauthorized)
 	var t = template.Must(template.New("loginForm").Parse(HTML))
 	data := struct {
 		Title             string
@@ -130,6 +134,7 @@ func (h *handler) loginForm(responseWriter http.ResponseWriter) error {
 		FieldNamePassword: fieldNamePassword,
 	}
 	responseWriter.Header().Add("Content-Type", "text/html")
+	responseWriter.WriteHeader(http.StatusUnauthorized)
 	return t.Execute(responseWriter, data)
 }
 

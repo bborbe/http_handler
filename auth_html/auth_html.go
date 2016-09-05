@@ -20,15 +20,26 @@ var expiration = time.Now().Add(24 * time.Hour)
 
 type Check func(username string, password string) (bool, error)
 
+type Crypter interface {
+	Encrypt(text string) (string, error)
+	Decrypt(text string) (string, error)
+}
+
 type handler struct {
 	handler http.HandlerFunc
 	check   Check
+	crypter Crypter
 }
 
-func New(subhandler http.HandlerFunc, check Check) *handler {
+func New(
+	subhandler http.HandlerFunc,
+	check Check,
+	crypter Crypter,
+) *handler {
 	h := new(handler)
 	h.handler = subhandler
 	h.check = check
+	h.crypter = crypter
 	return h
 }
 
@@ -68,9 +79,14 @@ func (h *handler) validateLoginParams(responseWriter http.ResponseWriter, reques
 		return h.loginForm(responseWriter)
 	}
 	glog.V(2).Infof("login success, set cookie")
+	data, err := h.crypter.Encrypt(header.CreateAuthorizationToken(login, password))
+	if err != nil {
+		glog.V(2).Infof("encrypt failed: %v", err)
+		return err
+	}
 	http.SetCookie(responseWriter, &http.Cookie{
 		Name:    cookieName,
-		Value:   header.CreateAuthorizationToken(login, password),
+		Value:   data,
 		Expires: expiration,
 		Path:    "/",
 		Domain:  request.URL.Host,
@@ -87,7 +103,12 @@ func (h *handler) validateLoginCookie(request *http.Request) (bool, error) {
 		glog.V(2).Infof("get cookie %v failed: %v", cookieName, err)
 		return false, nil
 	}
-	user, pass, err := header.ParseAuthorizationToken(cookie.Value)
+	data, err := h.crypter.Decrypt(cookie.Value)
+	if err != nil {
+		glog.V(2).Infof("decrypt failed: %v", err)
+		return false, err
+	}
+	user, pass, err := header.ParseAuthorizationToken(data)
 	if err != nil {
 		glog.V(2).Infof("parse header failed: %v", err)
 		return false, nil
@@ -100,11 +121,13 @@ func (h *handler) loginForm(responseWriter http.ResponseWriter) error {
 	responseWriter.WriteHeader(http.StatusUnauthorized)
 	var t = template.Must(template.New("loginForm").Parse(HTML))
 	data := struct {
-		CookieName string
-		Title      string
+		Title             string
+		FieldNameLogin    string
+		FieldNamePassword string
 	}{
-		CookieName: cookieName,
-		Title:      "Login",
+		Title:             "Login",
+		FieldNameLogin:    fieldNameLogin,
+		FieldNamePassword: fieldNamePassword,
 	}
 	responseWriter.Header().Add("Content-Type", "text/html")
 	return t.Execute(responseWriter, data)
@@ -143,18 +166,18 @@ body {
 					<legend>Login required</legend>
 
 					<div class="form-group">
-						<label class="col-md-3 control-label" for="login">Login</label>
+						<label class="col-md-3 control-label" for="{{.FieldNameLogin}}">Login</label>
 
 						<div class="col-md-3">
-							<input type="text" id="login" name="login" min="1" max="255" required="" placeholder="login" class="form-control input-md">
+							<input type="text" id="{{.FieldNameLogin}}" name="{{.FieldNameLogin}}" min="1" max="255" required="" placeholder="login" class="form-control input-md">
 						</div>
 					</div>
 
 					<div class="form-group">
-						<label class="col-md-3 control-label" for="password">Password</label>
+						<label class="col-md-3 control-label" for="{{.FieldNamePassword}}">Password</label>
 
 						<div class="col-md-3">
-							<input type="password" id="password" name="password" min="1" max="255" required="" placeholder="password" class="form-control input-md">
+							<input type="password" id="{{.FieldNamePassword}}" name="{{.FieldNamePassword}}" min="1" max="255" required="" placeholder="password" class="form-control input-md">
 						</div>
 					</div>
 

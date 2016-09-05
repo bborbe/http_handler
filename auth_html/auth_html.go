@@ -140,7 +140,9 @@ func (h *handler) validateLoginParams(responseWriter http.ResponseWriter, reques
 		Domain:  request.URL.Host,
 	},
 	)
-	http.Redirect(responseWriter, request, "/", http.StatusTemporaryRedirect)
+	target := request.URL.Path
+	glog.V(2).Infof("login success, redirect to %v", target)
+	http.Redirect(responseWriter, request, target, http.StatusTemporaryRedirect)
 	return nil
 }
 
@@ -190,6 +192,7 @@ body {
 			<form name="loginForm" class="form-horizontal" action="" method="post">
 				<fieldset>
 					<legend>Login required</legend>
+
 					<div class="form-group">
 						<label class="col-md-3 control-label" for="{{.FieldNameLogin}}">Login</label>
 						<div class="col-md-3">

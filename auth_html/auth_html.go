@@ -78,7 +78,7 @@ func (h *handler) validateLogin(request *http.Request) (bool, error) {
 func (h *handler) validateLoginBasic(request *http.Request) (bool, error) {
 	user, pass, err := header.ParseAuthorizationBasisHttpRequest(request)
 	if err != nil {
-		glog.Warningf("parse header failed: %v", err)
+		glog.V(2).Infof("parse basic authorization header failed: %v", err)
 		return false, err
 	}
 	valid, err := h.check(user, pass)
@@ -103,7 +103,7 @@ func (h *handler) validateLoginCookie(request *http.Request) (bool, error) {
 	}
 	user, pass, err := header.ParseAuthorizationToken(data)
 	if err != nil {
-		glog.V(2).Infof("parse header failed: %v", err)
+		glog.V(2).Infof("parse cookie failed: %v", err)
 		return false, nil
 	}
 	return h.check(user, pass)

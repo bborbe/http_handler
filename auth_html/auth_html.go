@@ -1,11 +1,12 @@
 package auth_html
 
 import (
-	"github.com/bborbe/http/header"
-	"github.com/golang/glog"
 	"html/template"
 	"net/http"
 	"time"
+
+	"github.com/bborbe/http/header"
+	"github.com/golang/glog"
 )
 
 const (

@@ -25,7 +25,7 @@ func New(subhandler http.HandlerFunc, check Check, realm string) *handler {
 }
 
 func (h *handler) ServeHTTP(responseWriter http.ResponseWriter, request *http.Request) {
-	glog.V(2).Infof("check basic auth")
+	glog.V(4).Infof("check basic auth")
 	if err := h.serveHTTP(responseWriter, request); err != nil {
 		responseWriter.Header().Add("WWW-Authenticate", fmt.Sprintf("Basic realm=\"%s\"", h.realm))
 		responseWriter.WriteHeader(http.StatusUnauthorized)
@@ -33,7 +33,7 @@ func (h *handler) ServeHTTP(responseWriter http.ResponseWriter, request *http.Re
 }
 
 func (h *handler) serveHTTP(responseWriter http.ResponseWriter, request *http.Request) error {
-	glog.V(2).Infof("check basic auth")
+	glog.V(4).Infof("check basic auth")
 	user, pass, err := header.ParseAuthorizationBasisHttpRequest(request)
 	if err != nil {
 		glog.Warningf("parse header failed: %v", err)
@@ -45,7 +45,7 @@ func (h *handler) serveHTTP(responseWriter http.ResponseWriter, request *http.Re
 		return err
 	}
 	if !valid {
-		glog.V(1).Infof("auth invalid for user %v", user)
+		glog.V(2).Infof("auth invalid for user %v", user)
 		return fmt.Errorf("auth invalid for user %v", user)
 	}
 	h.handler(responseWriter, request)

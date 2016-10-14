@@ -25,7 +25,7 @@ func reverse(dirs []string) []string {
 		if _, err := os.Stat(dir); os.IsNotExist(err) {
 			glog.Warningf("dir %s not found", dir)
 		}
-		glog.V(2).Infof("setup dir %s", dir)
+		glog.V(4).Infof("setup dir %s", dir)
 		result[len(result)-i-1] = dir
 	}
 	return result
@@ -37,22 +37,22 @@ func (h *handler) ServeHTTP(responseWriter http.ResponseWriter, request *http.Re
 		name = directoryIndex
 	}
 	for _, root := range h.dirs {
-		glog.V(2).Infof("search file %s in directory %s", name, root)
+		glog.V(4).Infof("search file %s in directory %s", name, root)
 		f, err := http.Dir(root).Open(name)
 		if err != nil {
-			glog.V(2).Infof("file %s not found in directory %s", name, root)
+			glog.V(4).Infof("file %s not found in directory %s", name, root)
 			continue
 		}
 		defer f.Close()
 		d, err := f.Stat()
 		if err != nil {
-			glog.V(2).Infof("stat file %s failed: %v", err)
+			glog.V(4).Infof("stat file %s failed: %v", err)
 			return
 		}
-		glog.V(2).Infof("found file %s in directory %s", name, root)
+		glog.V(4).Infof("found file %s in directory %s", name, root)
 		http.ServeContent(responseWriter, request, d.Name(), d.ModTime(), f)
 		return
 	}
-	glog.V(1).Infof("file not found %s", name)
+	glog.V(2).Infof("file not found %s", name)
 	http.NotFound(responseWriter, request)
 }

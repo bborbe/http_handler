@@ -91,46 +91,46 @@ func (h *handler) validateLoginBasic(request *http.Request) (bool, error) {
 }
 
 func (h *handler) validateLoginCookie(request *http.Request) (bool, error) {
-	glog.V(2).Infof("validate login via cookie")
+	glog.V(4).Infof("validate login via cookie")
 	cookie, err := request.Cookie(cookieName)
 	if err != nil {
-		glog.V(2).Infof("get cookie %v failed: %v", cookieName, err)
+		glog.V(4).Infof("get cookie %v failed: %v", cookieName, err)
 		return false, nil
 	}
 	data, err := h.crypter.Decrypt(cookie.Value)
 	if err != nil {
-		glog.V(1).Infof("decrypt failed: %v", err)
+		glog.V(2).Infof("decrypt failed: %v", err)
 		return false, nil
 	}
 	user, pass, err := header.ParseAuthorizationToken(data)
 	if err != nil {
-		glog.V(2).Infof("parse cookie failed: %v", err)
+		glog.V(4).Infof("parse cookie failed: %v", err)
 		return false, nil
 	}
 	return h.check(user, pass)
 }
 
 func (h *handler) validateLoginParams(responseWriter http.ResponseWriter, request *http.Request) error {
-	glog.V(2).Infof("validate login via params")
+	glog.V(4).Infof("validate login via params")
 	login := request.FormValue(fieldNameLogin)
 	password := request.FormValue(fieldNamePassword)
 	if len(login) == 0 || len(password) == 0 {
-		glog.V(2).Infof("login or password empty => skip")
+		glog.V(4).Infof("login or password empty => skip")
 		return h.loginForm(responseWriter)
 	}
 	valid, err := h.check(login, password)
 	if err != nil {
-		glog.V(2).Infof("check login failed: %v", err)
+		glog.V(4).Infof("check login failed: %v", err)
 		return err
 	}
 	if !valid {
-		glog.V(2).Infof("login failed, show login form")
+		glog.V(4).Infof("login failed, show login form")
 		return h.loginForm(responseWriter)
 	}
-	glog.V(2).Infof("login success, set cookie")
+	glog.V(4).Infof("login success, set cookie")
 	data, err := h.crypter.Encrypt(header.CreateAuthorizationToken(login, password))
 	if err != nil {
-		glog.V(2).Infof("encrypt failed: %v", err)
+		glog.V(4).Infof("encrypt failed: %v", err)
 		return err
 	}
 	http.SetCookie(responseWriter, &http.Cookie{
@@ -142,13 +142,13 @@ func (h *handler) validateLoginParams(responseWriter http.ResponseWriter, reques
 	},
 	)
 	target := request.URL.Path
-	glog.V(2).Infof("login success, redirect to %v", target)
+	glog.V(4).Infof("login success, redirect to %v", target)
 	http.Redirect(responseWriter, request, target, http.StatusTemporaryRedirect)
 	return nil
 }
 
 func (h *handler) loginForm(responseWriter http.ResponseWriter) error {
-	glog.V(2).Infof("login form")
+	glog.V(4).Infof("login form")
 	var t = template.Must(template.New("loginForm").Parse(HTML))
 	data := struct {
 		Title             string

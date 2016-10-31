@@ -77,37 +77,45 @@ func (h *handler) validateLogin(request *http.Request) (bool, error) {
 }
 
 func (h *handler) validateLoginBasic(request *http.Request) (bool, error) {
+	glog.V(4).Infof("validate login via basic")
 	user, pass, err := header.ParseAuthorizationBasisHttpRequest(request)
 	if err != nil {
 		glog.V(2).Infof("parse basic authorization header failed: %v", err)
 		return false, err
 	}
-	valid, err := h.check(user, pass)
+	result, err := h.check(user, pass)
 	if err != nil {
 		glog.Warningf("check auth for user %v failed: %v", user, err)
 		return false, err
 	}
-	return valid, nil
+	glog.V(2).Infof("validate login via basic => %v", result)
+	return result, nil
 }
 
 func (h *handler) validateLoginCookie(request *http.Request) (bool, error) {
 	glog.V(4).Infof("validate login via cookie")
 	cookie, err := request.Cookie(cookieName)
 	if err != nil {
-		glog.V(4).Infof("get cookie %v failed: %v", cookieName, err)
+		glog.V(2).Infof("get cookie %v failed: %v", cookieName, err)
 		return false, nil
 	}
 	data, err := h.crypter.Decrypt(cookie.Value)
 	if err != nil {
-		glog.V(2).Infof("decrypt failed: %v", err)
+		glog.V(2).Infof("decrypt cookie value failed: %v", err)
 		return false, nil
 	}
 	user, pass, err := header.ParseAuthorizationToken(data)
 	if err != nil {
-		glog.V(4).Infof("parse cookie failed: %v", err)
+		glog.V(2).Infof("parse cookie failed: %v", err)
 		return false, nil
 	}
-	return h.check(user, pass)
+	result, err := h.check(user, pass)
+	if err != nil {
+		glog.Warningf("check auth for user %v failed: %v", user, err)
+		return false, err
+	}
+	glog.V(2).Infof("validate login via cookie => %v", result)
+	return result, nil
 }
 
 func (h *handler) validateLoginParams(responseWriter http.ResponseWriter, request *http.Request) error {

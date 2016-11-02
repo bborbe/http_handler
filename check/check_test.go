@@ -10,8 +10,7 @@ import (
 func TestImplementsHandler(t *testing.T) {
 	object := New(nil)
 	var expected *http.Handler
-	err := AssertThat(object, Implements(expected))
-	if err != nil {
+	if err := AssertThat(object, Implements(expected)); err != nil {
 		t.Fatal(err)
 	}
 }

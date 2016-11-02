@@ -143,7 +143,7 @@ func (h *handler) validateLoginParams(responseWriter http.ResponseWriter, reques
 	http.SetCookie(responseWriter, &http.Cookie{
 		Name:    cookieName,
 		Value:   data,
-		Expires: time.Now().Add(loginDuration),
+		Expires: createExpires(),
 		Path:    "/",
 		Domain:  request.URL.Host,
 	})
@@ -151,6 +151,10 @@ func (h *handler) validateLoginParams(responseWriter http.ResponseWriter, reques
 	glog.V(4).Infof("login success, redirect to %v", target)
 	http.Redirect(responseWriter, request, target, http.StatusTemporaryRedirect)
 	return nil
+}
+
+func createExpires() time.Time {
+	return time.Now().Add(loginDuration)
 }
 
 func (h *handler) loginForm(responseWriter http.ResponseWriter) error {

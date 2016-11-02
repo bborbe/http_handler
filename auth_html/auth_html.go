@@ -13,9 +13,8 @@ const (
 	fieldNameLogin    = "login"
 	fieldNamePassword = "password"
 	cookieName        = "auth-http-proxy-token"
+	loginDuration     = 24 * time.Hour
 )
-
-var expiration = time.Now().Add(24 * time.Hour)
 
 type Check func(username string, password string) (bool, error)
 
@@ -144,11 +143,10 @@ func (h *handler) validateLoginParams(responseWriter http.ResponseWriter, reques
 	http.SetCookie(responseWriter, &http.Cookie{
 		Name:    cookieName,
 		Value:   data,
-		Expires: expiration,
+		Expires: time.Now().Add(loginDuration),
 		Path:    "/",
 		Domain:  request.URL.Host,
-	},
-	)
+	})
 	target := request.URL.Path
 	glog.V(4).Infof("login success, redirect to %v", target)
 	http.Redirect(responseWriter, request, target, http.StatusTemporaryRedirect)

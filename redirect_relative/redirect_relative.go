@@ -22,6 +22,6 @@ func New(target string) *handler {
 
 func (h *handler) ServeHTTP(resp http.ResponseWriter, req *http.Request) {
 	target := fmt.Sprintf("%v%v", req.URL.Path, h.path)
-	glog.V(2).Infof("redirect to %s %d", target, h.status)
+	glog.V(4).Infof("redirect to %s %d", target, h.status)
 	http.Redirect(resp, req, target, h.status)
 }

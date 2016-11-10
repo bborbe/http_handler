@@ -21,8 +21,8 @@ func New(m interface{}) *handler {
 }
 
 func (h *handler) ServeHTTP(responseWriter http.ResponseWriter, request *http.Request) {
-	glog.V(2).Info("write json")
-	glog.V(2).Infof("object to convert %v", h.m)
+	glog.V(4).Info("write json")
+	glog.V(4).Infof("object to convert %v", h.m)
 	b, err := json.Marshal(h.m)
 	if err != nil {
 		glog.V(2).Infof("Marshal json failed: %v", err)
@@ -30,11 +30,13 @@ func (h *handler) ServeHTTP(responseWriter http.ResponseWriter, request *http.Re
 		e.ServeHTTP(responseWriter, request)
 		return
 	}
-	glog.V(2).Infof("json string %s", string(b))
+	if glog.V(4) {
+		glog.Infof("json string %s", string(b))
+	}
 	responseWriter.Header().Set("Content-Type", "application/json")
 	responseWriter.WriteHeader(http.StatusOK)
 
-	glog.V(2).Infof("object type %v", reflect.TypeOf(h.m).Kind())
+	glog.V(4).Infof("object type %v", reflect.TypeOf(h.m).Kind())
 	if reflect.TypeOf(h.m).Kind() == reflect.Slice && string(b) == "null" {
 		responseWriter.Write([]byte("[]"))
 	} else {

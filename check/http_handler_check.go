@@ -26,7 +26,7 @@ func (h *handler) ServeHTTP(resp http.ResponseWriter, req *http.Request) {
 		http.Error(resp, fmt.Sprintf("check failed"), http.StatusInternalServerError)
 		return
 	}
-	glog.V(2).Infof("check => ok")
+	glog.V(4).Infof("check => ok")
 	resp.WriteHeader(http.StatusOK)
 	fmt.Fprintf(resp, "ok")
 }

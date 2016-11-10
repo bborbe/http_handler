@@ -46,7 +46,7 @@ func (h *handler) serveHTTP(resp http.ResponseWriter, req *http.Request) error {
 	subreq.Header = req.Header
 	subresp, err := h.executeRequest(h.target, subreq)
 	if err != nil {
-		glog.V(4).Infof("execute request to %v failed: %v", h.target, err)
+		glog.V(2).Infof("execute request to %v failed: %v", h.target, err)
 		return err
 	}
 	glog.V(4).Infof("write response")

@@ -25,7 +25,7 @@ func NewMessage(status int, message string) *handler {
 }
 
 func (h *handler) ServeHTTP(responseWriter http.ResponseWriter, request *http.Request) {
-	glog.V(2).Info("handle error")
+	glog.V(4).Info("handle error")
 
 	var data struct {
 		Status  int    `json:"status"`
@@ -33,7 +33,7 @@ func (h *handler) ServeHTTP(responseWriter http.ResponseWriter, request *http.Re
 	}
 	data.Message = h.message
 	data.Status = h.status
-	glog.V(2).Infof("set status: %d", h.status)
+	glog.V(4).Infof("set status: %d", h.status)
 	responseWriter.WriteHeader(h.status)
 	responseWriter.Header().Set("Content-Type", "application/json")
 	if err := json.NewEncoder(responseWriter).Encode(&data); err != nil {

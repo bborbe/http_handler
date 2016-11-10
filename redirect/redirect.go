@@ -19,6 +19,6 @@ func New(target string) *handler {
 }
 
 func (h *handler) ServeHTTP(resp http.ResponseWriter, req *http.Request) {
-	glog.V(2).Infof("redirect to %s %d", h.target, h.status)
+	glog.V(4).Infof("redirect to %s %d", h.target, h.status)
 	http.Redirect(resp, req, h.target, h.status)
 }

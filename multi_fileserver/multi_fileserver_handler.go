@@ -40,19 +40,19 @@ func (h *handler) ServeHTTP(responseWriter http.ResponseWriter, request *http.Re
 		glog.V(4).Infof("search file %s in directory %s", name, root)
 		f, err := http.Dir(root).Open(name)
 		if err != nil {
-			glog.V(4).Infof("file %s not found in directory %s", name, root)
+			glog.V(2).Infof("file %s not found in directory %s", name, root)
 			continue
 		}
 		defer f.Close()
 		d, err := f.Stat()
 		if err != nil {
-			glog.V(4).Infof("stat file %s failed: %v", err)
+			glog.V(2).Infof("stat file %s failed: %v", err)
 			return
 		}
 		glog.V(4).Infof("found file %s in directory %s", name, root)
 		http.ServeContent(responseWriter, request, d.Name(), d.ModTime(), f)
 		return
 	}
-	glog.V(2).Infof("file not found %s", name)
+	glog.V(4).Infof("file not found %s", name)
 	http.NotFound(responseWriter, request)
 }

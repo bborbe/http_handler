@@ -1,8 +1,8 @@
 hash: 5e13510bcc28e8a78d39f67b8f26ffb55fcdc980143b2f9d13d3e956b80839d2
-updated: 2016-08-30T10:15:13.573044517+02:00
+updated: 2016-11-10T11:53:26.75331094+01:00
 imports:
 - name: github.com/bborbe/http
-  version: addca5fc2e2de1bef39a64990873806e7fc9c0a9
+  version: 4a9c65a4efec460ef645e1cc4d9241e9bf661069
   subpackages:
   - header
   - mock
@@ -10,4 +10,4 @@ imports:
   version: 23def4e6c14b4da8ac2ed8007337bc5eb5007998
 testImports:
 - name: github.com/bborbe/assert
-  version: 2db035a4c0870f6f48d1955f7b9542f9dbd4fb64
+  version: d2b3a7c4c731ac8cc63c6f5a1ea7d401e7547d42

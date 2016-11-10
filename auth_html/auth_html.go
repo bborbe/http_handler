@@ -42,7 +42,7 @@ func New(
 }
 
 func (h *handler) ServeHTTP(responseWriter http.ResponseWriter, request *http.Request) {
-	glog.V(2).Infof("check html auth")
+	glog.V(4).Infof("check html auth")
 	if err := h.serveHTTP(responseWriter, request); err != nil {
 		glog.Warningf("check html auth failed: %v", err)
 		responseWriter.WriteHeader(http.StatusInternalServerError)
@@ -50,14 +50,14 @@ func (h *handler) ServeHTTP(responseWriter http.ResponseWriter, request *http.Re
 }
 
 func (h *handler) serveHTTP(responseWriter http.ResponseWriter, request *http.Request) error {
-	glog.V(2).Infof("check html auth")
+	glog.V(4).Infof("check html auth")
 	valid, err := h.validateLogin(request)
 	if err != nil {
 		glog.V(2).Infof("validate login failed: %v", err)
 		return err
 	}
 	if valid {
-		glog.V(2).Infof("login is valid, forward request")
+		glog.V(4).Infof("login is valid, forward request")
 		h.handler(responseWriter, request)
 		return nil
 	}
@@ -87,7 +87,7 @@ func (h *handler) validateLoginBasic(request *http.Request) (bool, error) {
 		glog.Warningf("check auth for user %v failed: %v", user, err)
 		return false, err
 	}
-	glog.V(2).Infof("validate login via basic => %v", result)
+	glog.V(4).Infof("validate login via basic => %v", result)
 	return result, nil
 }
 
@@ -113,7 +113,7 @@ func (h *handler) validateLoginCookie(request *http.Request) (bool, error) {
 		glog.Warningf("check auth for user %v failed: %v", user, err)
 		return false, err
 	}
-	glog.V(2).Infof("validate login via cookie => %v", result)
+	glog.V(4).Infof("validate login via cookie => %v", result)
 	return result, nil
 }
 
@@ -127,7 +127,7 @@ func (h *handler) validateLoginParams(responseWriter http.ResponseWriter, reques
 	}
 	valid, err := h.check(login, password)
 	if err != nil {
-		glog.V(4).Infof("check login failed: %v", err)
+		glog.V(2).Infof("check login failed: %v", err)
 		return err
 	}
 	if !valid {
@@ -137,7 +137,7 @@ func (h *handler) validateLoginParams(responseWriter http.ResponseWriter, reques
 	glog.V(4).Infof("login success, set cookie")
 	data, err := h.crypter.Encrypt(header.CreateAuthorizationToken(login, password))
 	if err != nil {
-		glog.V(4).Infof("encrypt failed: %v", err)
+		glog.V(2).Infof("encrypt failed: %v", err)
 		return err
 	}
 	http.SetCookie(responseWriter, &http.Cookie{

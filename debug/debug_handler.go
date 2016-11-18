@@ -19,7 +19,7 @@ func New(subhandler http.Handler) *handler {
 
 func (h *handler) ServeHTTP(responseWriter http.ResponseWriter, request *http.Request) {
 	start := time.Now()
-	defer glog.V(4).Infof("%s %s takes %dms", request.Method, request.RequestURI, time.Now().Sub(start)/time.Millisecond)
+	defer glog.V(4).Infof("%s %s takes %dms", request.Method, request.URL.Path, time.Now().Sub(start)/time.Millisecond)
 
 	glog.V(4).Infof("request %v: ", request)
 	h.subhandler.ServeHTTP(responseWriter, request)

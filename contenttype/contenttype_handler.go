@@ -26,7 +26,7 @@ func New(handler http.Handler) *contentTypeHandler {
 }
 
 func (h *contentTypeHandler) ServeHTTP(responseWriter http.ResponseWriter, request *http.Request) {
-	contentType, found := extensionToContentType[getExtension(request.RequestURI)]
+	contentType, found := extensionToContentType[getExtension(request.URL.Path)]
 	if found {
 		responseWriter.Header().Set("Content-Type", contentType)
 	}

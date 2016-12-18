@@ -141,16 +141,22 @@ func (h *handler) validateLoginParams(responseWriter http.ResponseWriter, reques
 		return err
 	}
 	http.SetCookie(responseWriter, &http.Cookie{
-		Name:    cookieName,
-		Value:   data,
-		Expires: createExpires(),
-		Path:    "/",
-		Domain:  request.URL.Host,
+		Name:     cookieName,
+		Value:    data,
+		Expires:  createExpires(),
+		Path:     "/",
+		Domain:   request.URL.Host,
+		HttpOnly: true,
+		Secure:   isSecureRequest(request),
 	})
 	target := request.URL.Path
 	glog.V(4).Infof("login success, redirect to %v", target)
 	http.Redirect(responseWriter, request, target, http.StatusTemporaryRedirect)
 	return nil
+}
+
+func isSecureRequest(request *http.Request) bool {
+	return request.TLS != nil || request.Header.Get("X-Forwarded-Proto") == "https"
 }
 
 func createExpires() time.Time {

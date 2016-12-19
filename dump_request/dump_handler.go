@@ -33,5 +33,6 @@ func (h *handler) serveHTTP(responseWriter http.ResponseWriter, request *http.Re
 		return err
 	}
 	responseWriter.Write(content)
+	glog.V(1).Info(string(content))
 	return nil
 }

@@ -149,10 +149,9 @@ func (h *handler) validateLoginParams(responseWriter http.ResponseWriter, reques
 		HttpOnly: true,
 		Secure:   isSecureRequest(request),
 	})
-	target := request.URL.Path
+	target := request.RequestURI
 	glog.V(4).Infof("login success, redirect to %v", target)
-	http.Redirect(responseWriter, request, target, http.StatusTemporaryRedirect)
-	return nil
+	return h.redirect(responseWriter, target)
 }
 
 func isSecureRequest(request *http.Request) bool {
@@ -165,13 +164,11 @@ func createExpires() time.Time {
 
 func (h *handler) loginForm(responseWriter http.ResponseWriter) error {
 	glog.V(4).Infof("login form")
-	var t = template.Must(template.New("loginForm").Parse(HTML))
+	var t = template.Must(template.New("loginForm").Parse(HTML_LOGIN_FORM))
 	data := struct {
-		Title             string
 		FieldNameLogin    string
 		FieldNamePassword string
 	}{
-		Title:             "Login",
 		FieldNameLogin:    fieldNameLogin,
 		FieldNamePassword: fieldNamePassword,
 	}
@@ -180,9 +177,61 @@ func (h *handler) loginForm(responseWriter http.ResponseWriter) error {
 	return t.Execute(responseWriter, data)
 }
 
-const HTML = `<!DOCTYPE html>
+func (h *handler) redirect(responseWriter http.ResponseWriter, target string) error {
+	glog.V(4).Infof("login form")
+	var t = template.Must(template.New("loginForm").Parse(HTML_REDIRECT))
+	data := struct {
+		Target string
+	}{
+		Target: target,
+	}
+	responseWriter.Header().Add("Content-Type", "text/html")
+	responseWriter.WriteHeader(http.StatusUnauthorized)
+	return t.Execute(responseWriter, data)
+}
+
+const HTML_REDIRECT = `<!DOCTYPE html>
 <html>
-<title>{{.Title}}</title>
+<title>Login Success</title>
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta http-equiv="Content-Language" content="en">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="author" content="Benjamin Borbe">
+<meta name="description" content="Login Success">
+<meta http-equiv="refresh" content="0;URL={{.Target}}">
+<link rel="icon" href="data:;base64,=">
+<link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+<link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css">
+<script type="text/javascript">
+window.location.href='{{.Target}}';
+</script>
+<style>
+html {
+	position: relative;
+	min-height: 100%;
+}
+body {
+	margin-top: 60px;
+}
+</style>
+</script>
+</head>
+<body>
+<div class="view-container">
+	<div class="container">
+		<div class="starter-template">
+			<h1>Login Success</h1>
+			<a href="{{.Target}}">{{.Target}}</a>
+		</div>
+	</div>
+</div>
+</body>
+</html>
+`
+
+const HTML_LOGIN_FORM = `<!DOCTYPE html>
+<html>
+<title>Login Form</title>
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta http-equiv="Content-Language" content="en">
 <meta name="viewport" content="width=device-width, initial-scale=1">

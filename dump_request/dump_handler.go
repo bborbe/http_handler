@@ -5,6 +5,7 @@ import (
 	"github.com/golang/glog"
 	"net/http"
 	"net/http/httputil"
+	"fmt"
 )
 
 type handler struct {
@@ -33,6 +34,7 @@ func (h *handler) serveHTTP(responseWriter http.ResponseWriter, request *http.Re
 		return err
 	}
 	responseWriter.Write(content)
+	fmt.Fprintf(responseWriter, "RemoteAddr: %v\n", request.RemoteAddr)
 	glog.V(1).Info(string(content))
 	return nil
 }

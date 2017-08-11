@@ -1,11 +1,11 @@
 package dump
 
 import (
+	"fmt"
 	error_handler "github.com/bborbe/http_handler/error"
 	"github.com/golang/glog"
 	"net/http"
 	"net/http/httputil"
-	"fmt"
 )
 
 type handler struct {
